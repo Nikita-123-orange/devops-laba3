@@ -1,2 +1,2 @@
-docker exec -it db psql -U postgres -d mydb SELECT * FROM predictions;                      
-SELECT * FROM predictions;
+docker exec -it db psql -U app_user -d ml_db -c "\dt"
+docker exec -it db psql -U app_user -d ml_db -c "SELECT * FROM predictions;"
