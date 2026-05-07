@@ -86,11 +86,11 @@ pipeline {
                         string(credentialsId: 'postgres-password', variable: 'POSTGRESQL_PASSWORD')
                     ]) {
                         withEnv([
-                            "POSTGRESQL_USER=${POSTGRESQL_USER}",
-                            "POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}",
-                            "POSTGRESQL_HOST=${POSTGRESQL_HOST}",
-                            "POSTGRESQL_PORT=${POSTGRESQL_PORT}",
-                            "POSTGRESQL_DB=${POSTGRESQL_DB}"
+                            "POSTGRES_USER=${POSTGRESQL_USER}",
+                            "POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}",
+                            "POSTGRES_HOST=${POSTGRESQL_HOST}",
+                            "POSTGRES_PORT=${POSTGRESQL_PORT}",
+                            "POSTGRES_DB=${POSTGRESQL_DB}"
                         ]) {
                             dir('devops-laba3') {
                                 bat 'docker-compose up -d'
