@@ -1,0 +1,121 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDS = credentials('docker')
+        LC_ALL = "en_US.UTF-8"
+        LANG    = "en_US.UTF-8"
+        LANGUAGE = "en_US.UTF-8"
+        // Несекретные параметры БД
+        POSTGRESQL_HOST = "db"
+        POSTGRESQL_PORT = "5432"
+        POSTGRESQL_DB   = "mydb"
+        // DVC настройки
+        DVC_CACHE_DIR = "C:\\dvc_cache"
+        DVC_REMOTE_NAME = "local_storage"
+        DVC_REMOTE_URL = "C:\\dvc_remote"
+    }
+
+    options {
+        timestamps()
+        skipDefaultCheckout(true)
+    }
+
+    stages {
+        stage('Clone repository (for compose file and DVC)') {
+            steps {
+                bat '''
+                    if exist devops-laba3 (
+                        cd devops-laba3 && git pull origin main
+                    ) else (
+                        git clone -b main https://github.com/Nikita-123-orange/devops-laba3.git
+                    )
+                '''
+            }
+        }
+
+        stage('Install DVC') {
+            steps {
+                bat 'python -m pip install --upgrade pip'
+                bat 'pip install dvc'
+            }
+        }
+
+        stage('Pull data with DVC') {
+            steps {
+                dir('devops-laba3') {
+                    bat 'if not exist %DVC_CACHE_DIR% mkdir %DVC_CACHE_DIR%'
+                    bat 'if not exist %DVC_REMOTE_URL% mkdir %DVC_REMOTE_URL%'
+                    bat '''
+                        dvc remote add -d %DVC_REMOTE_NAME% %DVC_REMOTE_URL% || echo "Remote already exists"
+                        dvc remote modify %DVC_REMOTE_NAME% --local url %DVC_REMOTE_URL%
+                        set DVC_CACHE_DIR=%DVC_CACHE_DIR%
+                        dvc pull --remote %DVC_REMOTE_NAME%
+                    '''
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                bat 'docker login -u %DOCKERHUB_CREDS_USR% -p %DOCKERHUB_CREDS_PSW%'
+            }
+        }
+
+        stage('Pull latest image') {
+            steps {
+                bat 'docker pull nikita123orange/devops-laba3:latest'
+            }
+        }
+
+        stage('Stop and remove old containers') {
+            steps {
+                dir('devops-laba3') {
+                    bat 'docker-compose down'
+                }
+            }
+        }
+
+        stage('Run database and web containers') {
+            steps {
+                script {
+                    dir('devops-laba3') {
+                        withCredentials([
+                            string(credentialsId: 'postgres-user', variable: 'POSTGRESQL_USER'),
+                            string(credentialsId: 'postgres-password', variable: 'POSTGRESQL_PASSWORD')
+                        ]) {
+                            // Создаём .env для передачи переменных в docker-compose
+                            bat """
+                                echo POSTGRESQL_USER=${POSTGRESQL_USER} > .env
+                                echo POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD} >> .env
+                                echo POSTGRESQL_HOST=${POSTGRESQL_HOST} >> .env
+                                echo POSTGRESQL_PORT=${POSTGRESQL_PORT} >> .env
+                                echo POSTGRESQL_DB=${POSTGRESQL_DB} >> .env
+                            """
+                            // Запуск контейнеров. Данные из текущей папки (включая подтянутые DVC) будут смонтированы
+                            // благодаря `volumes: - .:/app` в docker-compose.yml
+                            bat 'docker-compose up -d'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Verify data availability') {
+            steps {
+                dir('devops-laba3') {
+                    bat 'docker exec devops-laba3-web-1 ls -la /app/experiments || echo "experiments not found"'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            node('windows') {
+                bat 'docker logout'
+                bat 'if exist devops-laba3\\.env del devops-laba3\\.env'
+            }
+        }
+    }
+}

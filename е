@@ -1,0 +1,2 @@
+docker exec -it db psql -U postgres -d mydb SELECT * FROM predictions;                      
+SELECT * FROM predictions;

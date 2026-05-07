@@ -1,0 +1,7 @@
+[core]
+    remote = local_storage
+    autostage = true
+['remote "remote_storage"']
+    url = D:\MLE\4-5\dvc_remote
+['remote "local_storage"']
+    url = C:/dvc_remote

@@ -1,0 +1,6 @@
+data/train_fashion_mnist_y.csv
+data/train_fashion_mnist_x.csv
+data/fashion_mnist.zip
+data/fashion_mnist_y.csv
+data/fashion_mnist_x.csv
+data/fashion_mnist.csv

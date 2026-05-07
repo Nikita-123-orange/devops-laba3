@@ -1,0 +1,18 @@
+﻿version: "1.0"
+generated_at: "2026-04-21T17:58:49Z"
+docker_image:
+  name: "nikita123orange/devops-laba1:latest"
+  digest: "nikita123orange/devops-laba1@sha256:d908f2e526d5c8b15dc3fcdd1b41533596a5c4bc25bfe4fc59461d6d1d794562"
+  signature:
+    tool: "cosign"
+    public_key: |
+      -----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWqSYvnZNqBCGjnMb1njai3H5RCml
+EzlubVfFB5ly7XzQzCUUwCikib7E8MoKtfOv518cHRvswkDaZFZ7Laqs8g==
+-----END PUBLIC KEY-----
+
+code_commits:
+  last_5_hashes: ["9b375d5f47fbfe6c32f1319c7e3d3b70b86069f4", "382b49bb66c899df9ed06b14f21e3cdca5cab735", "3cca29593c08d287190d9813544dd91eddb491be", "d232215a04a3460f5c36301745bc40267f535c85", "aac46a9f1938af0741b561f6cea3426eb4690cad"]
+  branch: "main"
+test_coverage:
+  percent: 
