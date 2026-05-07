@@ -25,11 +25,8 @@ pipeline {
         stage('Clone repository (for compose file and DVC)') {
             steps {
                 bat '''
-                    if exist devops-laba3 (
-                        cd devops-laba3 && git pull origin main
-                    ) else (
-                        git clone -b main https://github.com/Nikita-123-orange/devops-laba3.git
-                    )
+                    if exist devops-laba3 rmdir /s /q devops-laba3
+                    git clone -b main https://github.com/Nikita-123-orange/devops-laba3.git
                 '''
             }
         }
