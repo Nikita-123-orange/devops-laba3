@@ -22,9 +22,9 @@ def get_db_credentials():
     data = secret["data"]["data"]
 
     return {
-        "user": data["POSTGRES_USER"],
-        "password": data["POSTGRES_PASSWORD"],
-        "db": data["POSTGRES_DB"],
-        "host": data["POSTGRES_HOST"],
-        "port": data["POSTGRES_PORT"]
+        "user": data["username"],
+        "password": data["password"],
+        "database": data["database"],
+        "host": data["host"],
+        "port": data["port"],
     }

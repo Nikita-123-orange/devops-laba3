@@ -10,7 +10,7 @@ creds = get_db_credentials()
 
 POSTGRES_USER = creds["user"]
 POSTGRES_PASSWORD = creds["password"]
-POSTGRES_DB = creds["db"]
+POSTGRES_DB = creds["database"]
 POSTGRES_HOST = creds["host"]
 POSTGRES_PORT = creds["port"]
 DATABASE_URL = (
